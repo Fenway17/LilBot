@@ -1,0 +1,22 @@
+{
+  "name": "lil-bot",
+  "version": "1.0.0",
+  "description": "A Discord Bot by FenwayYR",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --plugin-search-dir --write \"src\/**\/*.{js,ts,svelte,css,md,html,json}\"",
+		"format:python": "black . --exclude \"/venv/\" --exclude \"/bot-env/\"",
+    "bot": "py -3 src/main.py"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fenway17/LilBot.git"
+  },
+  "author": "Tan Yong Rui",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Fenway17/LilBot/issues"
+  },
+  "homepage": "https://github.com/Fenway17/LilBot#readme"
+}
