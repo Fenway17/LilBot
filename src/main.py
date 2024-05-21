@@ -2,11 +2,9 @@
 import os
 import discord
 from discord.ext import commands
-from dotenv import load_dotenv
-from cogs.bot_commands.test_commands import TestCommands
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-
+TEST_SERVER_ID = os.getenv("TEST_SERVER_ID")
 
 def get_prefix(bot, message):
     """A callable Prefix. Edited to allow per server prefixes."""
@@ -25,19 +23,33 @@ def get_prefix(bot, message):
 intents = discord.Intents.default()
 intents.message_content = True
 # client = discord.Client(intents=intents)  # connection to discord # TODO: remove?
-bot = commands.Bot(command_prefix=get_prefix, intents=intents)
+bot: commands.Bot = commands.Bot(command_prefix=get_prefix, intents=intents)
 
 initial_extensions = [
-    "cogs.bot_commands.test_commands",
+    "cogs.prefix_commands.test_commands",
+    "cogs.slash_commands.test_commands",
+    "cogs.hybrid_commands.test_commands",
 ]
 
-@bot.event
-async def on_ready():  # called when the bot is logged in and ready
+# sync the command tree (slash commands)
+async def sync_commands():
+    await bot.wait_until_ready()
+    # Optionally restrict to specific guild for development
+    bot.tree.copy_global_to(guild=discord.Object(id=TEST_SERVER_ID))  
+    await bot.tree.sync(guild=discord.Object(id=TEST_SERVER_ID))  # Optionally restrict to specific guild
+
+# load all cogs / extensions
+async def load_cog_extensions():
     for extension in initial_extensions:  # add cogs (command files)
         try:
             await bot.load_extension(extension)
         except Exception as e:
             print(f"Failed to load cog '{extension}': {e}")
+
+@bot.event
+async def on_ready():  # called when the bot is logged in and ready
+    await load_cog_extensions()
+    await bot.loop.create_task(sync_commands())
     
     # Changes bots Playing Status. type=1(streaming) for a standard game you could remove type and url.
     await bot.change_presence(
@@ -58,5 +70,6 @@ async def on_ready():  # called when the bot is logged in and ready
 
 #     if message.content.startswith("$hello"):
 #         await message.channel.send("Hello!")
+
 
 bot.run(BOT_TOKEN)  # runs the bot

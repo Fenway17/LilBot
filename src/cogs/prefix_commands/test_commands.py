@@ -1,14 +1,11 @@
 import discord
 from discord.ext import commands
-from utils.utils import check_master_user
+from utils.utils import check_master_user, send_message_not_admin
 
 
-class TestCommands(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
-
-    intents = discord.Intents.default()
-    intents.message_content = True
+class TestCommandsPrefix(commands.Cog):
+    def __init__(self, bot: commands.Bot):
+        self.bot: commands.Bot = bot
 
     @commands.command(name="test")
     async def test_multiple(self, ctx, *args):
@@ -29,10 +26,5 @@ class TestCommands(commands.Cog):
 
         await ctx.send(arg)
 
-
-async def setup(bot):  # required for adding cog to the bot
-    await bot.add_cog(TestCommands(bot))
-
-
-async def send_message_not_admin(ctx):
-    await ctx.send(f"Unable to use command, not an admin user")
+async def setup(bot: commands.Bot):  # required for adding cog to the bot
+    await bot.add_cog(TestCommandsPrefix(bot))

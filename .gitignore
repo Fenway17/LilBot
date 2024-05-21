@@ -1,4 +1,24 @@
+# Environment
 .env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# Python
 env/
 venv/
 bot-env/
+**/__pycache__/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Optional npm cache directory
+.npm
