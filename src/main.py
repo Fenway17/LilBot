@@ -10,7 +10,7 @@ TEST_SERVER_ID = os.getenv("TEST_SERVER_ID")
 def get_prefix(bot, message):
     """A callable Prefix. Edited to allow per server prefixes."""
 
-    prefixes = ["$", "#", "lil-bot"]  # Able use spaces in prefixes
+    prefixes = ["$", "#", "lil-bot"]  # may spaces in prefixes
 
     # Check to see if outside of a guild. e.g DM's etc
     if not message.guild:
@@ -23,7 +23,6 @@ def get_prefix(bot, message):
 
 intents = discord.Intents.default()
 intents.message_content = True
-# client = discord.Client(intents=intents)  # connection to discord # TODO: remove?
 bot: commands.Bot = commands.Bot(command_prefix=get_prefix, intents=intents)
 
 initial_extensions = [
