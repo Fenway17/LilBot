@@ -19,8 +19,8 @@ class TestCommandsSlash(commands.Cog):
     # it will take some time (up to an hour) to register the
     # command if it's for all guilds.
     @app_commands.command(
-        name="slash-test",
-        description="My first application Command",
+        name="hello",
+        description="Say Hello!",
     )
     async def test_command(self, interaction: discord.Interaction):
         await interaction.response.send_message("Hello!")
