@@ -8,7 +8,9 @@ TEST_SERVER_ID = os.getenv("TEST_SERVER_ID")
 
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
-tree = app_commands.CommandTree(client)
+tree = app_commands.CommandTree(
+    client
+)  # TODO: might not be needed due to commands.Bot description
 
 
 class TestCommandsSlash(commands.Cog):

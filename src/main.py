@@ -30,6 +30,8 @@ initial_extensions = [
     "cogs.slash_commands.test_commands",
     "cogs.hybrid_commands.test_commands",
     "cogs.repeat",
+    "cogs.register",
+    "cogs.error_handler",
 ]
 
 
@@ -54,6 +56,7 @@ async def load_cog_extensions():
 
 @bot.event
 async def on_ready():  # called when the bot is logged in and ready
+    # load extensions / sync slash commands
     await load_cog_extensions()
     await bot.loop.create_task(sync_commands())
 
