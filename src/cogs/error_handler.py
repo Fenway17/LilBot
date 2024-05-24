@@ -1,27 +1,22 @@
 from discord.ext import commands
 
 
-# TODO: TEST IF IT WORKS
 class ErrorHandler(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot: commands.Bot = bot
 
     @commands.Cog.listener()
     async def on_command_error(
-        self, ctx, error
+        self, ctx: commands.Context, error
     ):  # handles errors for regular prefix commands
         if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(
-                "Missing required argument. Please check your input and try again."
-            )
+            await ctx.send("Missing input. Please provide inputs.", delete_after=10)
         elif isinstance(error, commands.BadArgument):
-            await ctx.send(
-                "Bad argument. Please provide the correct type of arguments."
-            )
+            await ctx.send("Bad input. Please provide correct types of inputs.", delete_after=10)
         elif isinstance(error, commands.CommandInvokeError):
-            await ctx.send("There was an error invoking the command.")
+            await ctx.send("Error invoking the command.", delete_after=10)
         else:
-            await ctx.send("An error occurred while processing the command.")
+            await ctx.send("Error occurred while processing the command.", delete_after=10)
         # log the error for debugging
         print(f"Prefix command error: {error}")
 
