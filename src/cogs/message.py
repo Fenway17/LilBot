@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 
+from utils.permissions import check_admin_user
+
 
 class Message(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -35,14 +37,16 @@ class Message(commands.Cog):
         except Exception as e:
             await self.handle_error(ctx, e)
 
+    # TODO: add functionality to delete specific user's messages
     @message.command(name="delete", description="Deletes the latest 0-10 messages")
     async def delete_messages(
         self, ctx: commands.Context, number: int, member: discord.Member = None
     ):
         try:
             if (
-                isinstance(ctx.author, discord.Member)
-                and not ctx.author.guild_permissions.manage_messages
+                check_admin_user(ctx.author.id)
+                or (isinstance(ctx.author, discord.Member)
+                and not ctx.author.guild_permissions.manage_messages)
             ):
                 await ctx.send("You do not have permission to delete messages.")
                 return

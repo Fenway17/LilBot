@@ -22,7 +22,7 @@ def check_developer_user(user_id: int):
 
 
 def check_admin_user(user_id):  # checks for server/guild admins
-    if check_master_user(user_id):
+    if check_developer_user(user_id):
         return True
     # TODO: add checks for admin users as well
     return False
