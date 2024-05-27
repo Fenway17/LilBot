@@ -44,8 +44,9 @@ async def sync_commands():
     bot.tree.copy_global_to(guild=discord.Object(id=TEST_SERVER_ID))
     bot.tree.copy_global_to(guild=discord.Object(id=PRIORITY_SERVER_ID))
     # Optionally restrict to specific guild for development; guild=discord.Object(id=TEST_SERVER_ID)
-    await bot.tree.sync(guild=discord.Object(id=TEST_SERVER_ID))  
-    await bot.tree.sync(guild=discord.Object(id=PRIORITY_SERVER_ID))  
+    await bot.tree.sync(guild=discord.Object(id=TEST_SERVER_ID))
+    await bot.tree.sync(guild=discord.Object(id=PRIORITY_SERVER_ID))
+    # bot.tree.clear_commands(guild=None) # clear entire slash command tree; used for removing all slash commands
     # await bot.tree.sync() # global sync; takes significantly longer to update
 
 

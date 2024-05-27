@@ -10,7 +10,9 @@ class Register(commands.Cog):
         self.db: SQLiteDatabase = SQLiteDatabase()
 
     # used to register a given user
-    async def database_register(self, ctx: commands.Context, user: discord.User, role: str = "user"):
+    async def database_register(
+        self, ctx: commands.Context, user: discord.User, role: str = "user"
+    ):
         user_id = user.id
         username = user.name
         if self.db.is_user_registered(user_id):
@@ -31,16 +33,20 @@ class Register(commands.Cog):
 
     # used to handle errors
     async def handle_error(self, ctx: commands.Context, error: Exception):
-        await ctx.send(f"Invalid input used. Please use correct inputs.", delete_after=5)
+        await ctx.send(
+            f"Invalid input used. Please use correct inputs.", delete_after=5
+        )
         # log the error for debugging
         print(f"Registration related error: {error}")
 
     # for commands.hybrid_group, Group.invoke_without_command is auto set to True
     @commands.hybrid_group(name="user", description="User related commands")
-    async def user_group(self, ctx: commands.Context):  
+    async def user_group(self, ctx: commands.Context):
         await ctx.send(f"Please specify subcommands.", delete_after=5)
 
-    @user_group.command(name="register_me", description="Registers yourself with LilBot")
+    @user_group.command(
+        name="register_me", description="Registers yourself with LilBot"
+    )
     async def register_me(self, ctx: commands.Context):
         try:
             await self.database_register(ctx, ctx.author)
@@ -50,7 +56,9 @@ class Register(commands.Cog):
     @user_group.command(
         name="register_user", description="Registers a given user with LilBot"
     )
-    async def register_user(self, ctx: commands.Context, user: discord.User, role: str = "user"):
+    async def register_user(
+        self, ctx: commands.Context, user: discord.User, role: str = "user"
+    ):
         try:
             invoker_user_id = ctx.author.id
             if not (check_master_user(invoker_user_id)):
@@ -103,7 +111,7 @@ class Register(commands.Cog):
             if not self.db.is_user_registered(user.id):
                 await ctx.send(f"{user.name} is not even registered!")
                 return
-            
+
             user_role = self.db.get_user_role(user.id)
             await ctx.send(f"User info for {user.name}:\nRole: {user_role}")
             # TODO: more user info logic here
