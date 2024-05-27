@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "venv-setup": "python3 -m venv bot-env",
+    "pip-install": "pip install -r requirements.txt",
     "format": "prettier --plugin-search-dir --write \"src/**/*.{js,ts,svelte,css,md,html,json}\"",
-    "format:python": "black . --exclude \"/venv/\" --exclude \"/bot-env/\"",
+    "format-python": "black . --exclude \"/venv/\" --exclude \"/bot-env/\"",
     "bot": "py src/main.py"
   },
   "repository": {
