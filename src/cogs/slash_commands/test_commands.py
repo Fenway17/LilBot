@@ -2,15 +2,12 @@ import os
 import discord
 from discord import app_commands
 from discord.ext import commands
-from utils.utils import check_master_user, send_message_not_admin
+from utils.permissions import check_developer_user, send_message_not_role
 
 TEST_SERVER_ID = os.getenv("TEST_SERVER_ID")
 
-intents = discord.Intents.default()
-client = discord.Client(intents=intents)
-tree = app_commands.CommandTree(client)
 
-
+# sample slash commands
 class TestCommandsSlash(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot: commands.Bot = bot
@@ -24,6 +21,10 @@ class TestCommandsSlash(commands.Cog):
         description="Say Hello!",
     )
     async def test_command(self, interaction: discord.Interaction):
+        if not check_developer_user(interaction.user.id):
+            await send_message_not_role(interaction, "developer")
+            return
+
         await interaction.response.send_message("Hello!")
 
 

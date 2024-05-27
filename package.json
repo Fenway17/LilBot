@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "prettier --plugin-search-dir --write \"src\/**\/*.{js,ts,svelte,css,md,html,json}\"",
-		"format:python": "black . --exclude \"/venv/\" --exclude \"/bot-env/\"",
-    "bot": "py -3 src/main.py"
+    "format": "prettier --plugin-search-dir --write \"src/**/*.{js,ts,svelte,css,md,html,json}\"",
+    "format:python": "black . --exclude \"/venv/\" --exclude \"/bot-env/\"",
+    "bot": "py src/main.py"
   },
   "repository": {
     "type": "git",

@@ -5,6 +5,7 @@ from discord.ext import commands
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 TEST_SERVER_ID = os.getenv("TEST_SERVER_ID")
+PRIORITY_SERVER_ID = os.getenv("PRIORITY_SERVER_ID")
 
 
 def get_prefix(bot, message):
@@ -27,20 +28,26 @@ bot: commands.Bot = commands.Bot(command_prefix=get_prefix, intents=intents)
 
 initial_extensions = [
     "cogs.prefix_commands.test_commands",
+    "cogs.prefix_commands.greet",
     "cogs.slash_commands.test_commands",
     "cogs.hybrid_commands.test_commands",
-    "cogs.repeat",
+    "cogs.register",
+    "cogs.message",
+    "cogs.error_handler",
 ]
 
 
 # sync the command tree (slash commands)
 async def sync_commands():
     await bot.wait_until_ready()
-    # Optionally restrict to specific guild for development
+    # Optionally restrict to specific guild for development; guild=discord.Object(id=TEST_SERVER_ID)
     bot.tree.copy_global_to(guild=discord.Object(id=TEST_SERVER_ID))
-    await bot.tree.sync(
-        guild=discord.Object(id=TEST_SERVER_ID)
-    )  # Optionally restrict to specific guild
+    bot.tree.copy_global_to(guild=discord.Object(id=PRIORITY_SERVER_ID))
+    # Optionally restrict to specific guild for development; guild=discord.Object(id=TEST_SERVER_ID)
+    await bot.tree.sync(guild=discord.Object(id=TEST_SERVER_ID))
+    await bot.tree.sync(guild=discord.Object(id=PRIORITY_SERVER_ID))
+    # bot.tree.clear_commands(guild=None) # clear entire slash command tree; used for removing all slash commands
+    # await bot.tree.sync() # global sync; takes significantly longer to update
 
 
 # load all cogs / extensions
@@ -50,22 +57,24 @@ async def load_cog_extensions():
             await bot.load_extension(extension)
         except Exception as e:
             print(f"Failed to load cog '{extension}': {e}")
+    print(f"Loaded all extensions.")
 
 
 @bot.event
 async def on_ready():  # called when the bot is logged in and ready
+    # load extensions / sync slash commands
     await load_cog_extensions()
     await bot.loop.create_task(sync_commands())
 
     # Changes bots Playing Status. type=1(streaming) for a standard game you could remove type and url.
     await bot.change_presence(
         activity=discord.Game(
-            name="Under Construction", type=1, url="https://github.com/Fenway17/LilBot"
+            name="In development", type=1, url="https://github.com/Fenway17/LilBot"
         )
     )
 
     print(
-        f"\n\nLogged in as: {bot.user.name} - {bot.user.id}\nVersion: {discord.__version__}\n"
+        f"\n\nLogged in as: {bot.user.name} - {bot.user.id}\nDiscord version: {discord.__version__}\n"
     )
 
 
