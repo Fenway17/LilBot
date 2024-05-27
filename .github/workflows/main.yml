@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Format files
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.12.3'  # Specify the Python version you are using
+        
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '22.1.0' # Or specify any other version you want to use
+      
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Install NPM Dependencies
+      run: npm install
+
+    - name: Format Frontend
+      run: npm run format:python
+      
+    - name: Check for Changes After Format
+      run: git diff --exit-code
+      
+    # - name: Run tests
+    #   run: |
+    #     pytest  # Assuming you have tests defined using pytest
+
+    # - name: Deploy to Server
+    #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    #   env:
+    #     DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+    #     OTHER_SECRET: ${{ secrets.OTHER_SECRET }}
+    #   run: |
+    #     # Run your deployment script here, for example:
+    #     # python deploy.py
+    #     # Ensure your deployment script uses the secrets securely
