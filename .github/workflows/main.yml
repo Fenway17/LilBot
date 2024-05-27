@@ -36,7 +36,7 @@ jobs:
       run: npm install
 
     - name: Format Frontend
-      run: npm run format:python
+      run: npm run format-python
       
     - name: Check for Changes After Format
       run: git diff --exit-code
