@@ -9,6 +9,9 @@ YOUTUBE_URL_REGEX = re.compile(
     r"(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/.+"
 )
 
+YOUTUBE_PLAYLIST_URL_REGEX = re.compile(
+    r'^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.*(list=.+)$')
+
 # ydl_opts = {
 #     "format": "bestaudio/best",
 #     "outtmpl": "%(extractor)s-%(id)s-%(title)s.%(ext)s",
@@ -108,26 +111,49 @@ class YoutubeMusic(commands.Cog):
             self.current_song_index[ctx.guild.id] = -1
             self.repeat_mode[ctx.guild.id] = False
 
+        
+
         if search:
             print(f"searching for youtube video")
             # Check if search input is a URL
-            if not YOUTUBE_URL_REGEX.match(search):
+            is_playlist_url = YOUTUBE_PLAYLIST_URL_REGEX.match(search)
+            is_video_url = YOUTUBE_URL_REGEX.match(search)
+            if not is_playlist_url and not is_video_url:
                 # If not a URL, search for the video
                 search = f"ytsearch:{search}"
+
+            # extract_flat to extract minimal info
+            ydl_opts_used = {
+                **ydl_opts,
+                'extract_flat': 'in_playlist' if is_playlist_url else False,
+            }
 
             # parse into YDL and input into song queue
             with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                 info = ydl.extract_info(search, download=False)
                 if "entries" in info:
-                    # given after a search (instead of direct url)
-                    info = info["entries"][0]  # Take the first result from the search
-                # url2 = info["formats"][0]["url"]
-                url2 = info["url"]
-                title = info.get("title", "Unknown Title")
-                print(f"url2 = {url2}; title = {title}")
-                # add to playlist
-                self.song_queue[ctx.guild.id].append((url2, title))
-                await ctx.send(f"Added to queue: {title}")
+                    # info is multiple entries
+                    # entries given after a keyword search or playlist url search
+                    entries = info["entries"] # take all entries
+                else:
+                    # info is a single entry
+                    entries = [info] # make into single item list
+
+                # add all entries to playlist
+                for entry in entries:
+                    url2 = entry["url"]
+                    title = entry.get("title", "Unknown Title")
+                    print(f"url2 = {url2}; title = {title}")
+                    # add to playlist
+                    self.song_queue[ctx.guild.id].append((url2, title))
+
+                # inform user
+                if is_playlist_url:
+                    playlist_title = info.get('title', 'Unknown Playlist')
+                    await ctx.send(f"Added playlist to queue: {playlist_title}")
+                else:
+                    video_title = entries[0].get('title', 'Unknown Title')
+                    await ctx.send(f"Added to queue: {video_title}")
 
         # attempt to play music
         if not ctx.voice_client.is_playing():
