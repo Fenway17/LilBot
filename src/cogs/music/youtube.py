@@ -10,7 +10,8 @@ YOUTUBE_URL_REGEX = re.compile(
 )
 
 YOUTUBE_PLAYLIST_URL_REGEX = re.compile(
-    r'^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.*(list=.+)$')
+    r"^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.*(list=.+)$"
+)
 
 # ydl_opts = {
 #     "format": "bestaudio/best",
@@ -123,7 +124,7 @@ class YoutubeMusic(commands.Cog):
             # extract_flat to extract minimal info
             ydl_opts_used = {
                 **ydl_opts,
-                'extract_flat': 'in_playlist' if is_playlist_url else False,
+                "extract_flat": "in_playlist" if is_playlist_url else False,
             }
 
             # parse into YDL and input into song queue
@@ -132,10 +133,10 @@ class YoutubeMusic(commands.Cog):
                 if "entries" in info:
                     # info is multiple entries
                     # entries given after a keyword search or playlist url search
-                    entries = info["entries"] # take all entries
+                    entries = info["entries"]  # take all entries
                 else:
                     # info is a single entry
-                    entries = [info] # make into single item list
+                    entries = [info]  # make into single item list
 
                 # add all entries to playlist
                 for entry in entries:
@@ -147,10 +148,10 @@ class YoutubeMusic(commands.Cog):
 
                 # inform user
                 if is_playlist_url:
-                    playlist_title = info.get('title', 'Unknown Playlist')
+                    playlist_title = info.get("title", "Unknown Playlist")
                     await ctx.send(f"Added playlist to queue: {playlist_title}")
                 else:
-                    video_title = entries[0].get('title', 'Unknown Title')
+                    video_title = entries[0].get("title", "Unknown Title")
                     await ctx.send(f"Added to queue: {video_title}")
 
         # attempt to play music
