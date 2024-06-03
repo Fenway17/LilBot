@@ -41,7 +41,7 @@ FFMPEG_OPTIONS = {
 class YoutubeMusic(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot: commands.Bot = bot
-        self.volume = 0.20
+        self.volume = 0.15
 
         # dictionary with keys: guild ids and values: list of (song url, title)
         self.song_queue = {}
@@ -110,8 +110,6 @@ class YoutubeMusic(commands.Cog):
             # initialize to -1; play next function increments this
             self.current_song_index[ctx.guild.id] = -1
             self.repeat_mode[ctx.guild.id] = False
-
-        
 
         if search:
             print(f"searching for youtube video")
@@ -211,7 +209,7 @@ class YoutubeMusic(commands.Cog):
                 self.current_song_index[ctx.guild.id] = (
                     len(self.song_queue[ctx.guild.id]) - 1
                 )
-                await ctx.send(f"End of playlist!", silent=True)
+                await ctx.send(f"End of playlist!", delete_after=5)
         else:
             # queue is empty or does not exist; remove current song record
             self.current_song.pop(ctx.guild.id, None)
