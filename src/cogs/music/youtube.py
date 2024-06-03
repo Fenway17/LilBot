@@ -211,7 +211,7 @@ class YoutubeMusic(commands.Cog):
     async def stop(self, ctx: commands.Context):
         await ctx.invoke(self.leave)
 
-    # TODO: Currently sets bot volume globally; might have unintended 
+    # TODO: Currently sets bot volume globally; might have unintended
     # effects in other servers; may need to convert volume into a dict
     @youtube.command(name="volume", help="Sets volume of the bot")
     async def volume(self, ctx: commands.Context, volume: int):
