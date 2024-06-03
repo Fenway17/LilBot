@@ -43,7 +43,7 @@ class Message(commands.Cog):
         self, ctx: commands.Context, number: int, member: discord.Member = None
     ):
         try:
-            if not check_admin_user(ctx.author.id) or (
+            if not check_admin_user(ctx.author.id) and (
                 isinstance(ctx.author, discord.Member)
                 and not ctx.author.guild_permissions.manage_messages
             ):
