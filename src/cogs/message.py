@@ -43,10 +43,9 @@ class Message(commands.Cog):
         self, ctx: commands.Context, number: int, member: discord.Member = None
     ):
         try:
-            if (
-                check_admin_user(ctx.author.id)
-                or (isinstance(ctx.author, discord.Member)
-                and not ctx.author.guild_permissions.manage_messages)
+            if not check_admin_user(ctx.author.id) or (
+                isinstance(ctx.author, discord.Member)
+                and not ctx.author.guild_permissions.manage_messages
             ):
                 await ctx.send("You do not have permission to delete messages.")
                 return
@@ -58,21 +57,12 @@ class Message(commands.Cog):
             if number > 10:
                 number = 10
 
-            if ctx.interaction:  # invoked via slash command
-                # defer command; else need to respond in 3 seconds
-                await ctx.interaction.response.defer()
-                deleted_messages = await ctx.channel.purge(
-                    limit=number, before=ctx.interaction.created_at
-                )
-                # await ctx.interaction.followup.send(f"Deleted {len(deleted_messages)} messages.")
-                await ctx.send(
-                    f"Deleted {len(deleted_messages)} messages.", delete_after=5
-                )
-            else:  # invoked via regular prefix command
-                deleted_messages = await ctx.channel.purge(limit=number)
-                await ctx.send(
-                    f"Deleted {len(deleted_messages)} messages.", delete_after=5
-                )
+            # defer command; else need to respond in 3 seconds
+            await ctx.defer()  # defers response if slash command was used
+            deleted_messages = await ctx.channel.purge(
+                limit=number, before=ctx.interaction.created_at
+            )
+            await ctx.send(f"Deleted {len(deleted_messages)} messages.", delete_after=5)
 
         except Exception as e:
             await self.handle_error(ctx, e)
