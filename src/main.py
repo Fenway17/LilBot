@@ -27,10 +27,11 @@ intents.message_content = True
 bot: commands.Bot = commands.Bot(command_prefix=get_prefix, intents=intents)
 
 initial_extensions = [
-    "cogs.prefix_commands.test_commands",
-    "cogs.prefix_commands.greet",
-    "cogs.slash_commands.test_commands",
-    "cogs.hybrid_commands.test_commands",
+    "cogs.testing.prefix_commands.test_commands",
+    "cogs.testing.prefix_commands.greet",
+    "cogs.testing.slash_commands.test_commands",
+    "cogs.testing.hybrid_commands.test_commands",
+    "cogs.music.youtube",
     "cogs.register",
     "cogs.message",
     "cogs.error_handler",
@@ -55,6 +56,7 @@ async def load_cog_extensions():
     for extension in initial_extensions:  # add cogs (command files)
         try:
             await bot.load_extension(extension)
+            print(f"Loaded to cog: '{extension}'")
         except Exception as e:
             print(f"Failed to load cog '{extension}': {e}")
     print(f"Loaded all extensions.")

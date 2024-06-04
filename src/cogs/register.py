@@ -1,7 +1,8 @@
 import discord
 from discord.ext import commands
+import utils.responses as responses
 from database.sqlite_database import SQLiteDatabase, valid_roles
-from utils.permissions import check_master_user, send_message_not_role
+from utils.permissions import check_master_user
 
 
 class Register(commands.Cog):
@@ -16,10 +17,10 @@ class Register(commands.Cog):
         user_id = user.id
         username = user.name
         if self.db.is_user_registered(user_id):
-            await ctx.send(f"{username} is already registered!")
+            await ctx.send(responses.USER_ALR_REGISTERED.format(name=username))
         else:
             self.db.register_user(user_id, username, role)
-            await ctx.send(f"{username} has been registered!")
+            await ctx.send(responses.USER_REGISTERED.format(name=username))
 
     # used to deregister a given user
     async def database_deregister(self, ctx: commands.Context, user: discord.User):
@@ -27,22 +28,20 @@ class Register(commands.Cog):
         username = user.name
         if self.db.is_user_registered(user_id):
             self.db.deregister_user(user_id)
-            await ctx.send(f"{username} is deregistered!")
+            await ctx.send(responses.USER_DEREGISTERED.format(name=username))
         else:
-            await ctx.send(f"{username} is not even registered!")
+            await ctx.send(responses.USER_NOT_REGISTERED.format(name=username))
 
     # used to handle errors
     async def handle_error(self, ctx: commands.Context, error: Exception):
-        await ctx.send(
-            f"Invalid input used. Please use correct inputs.", delete_after=5
-        )
+        await ctx.send(responses.USER_INVALID_INPUT, delete_after=5)
         # log the error for debugging
         print(f"Registration related error: {error}")
 
     # for commands.hybrid_group, Group.invoke_without_command is auto set to True
     @commands.hybrid_group(name="user", description="User related commands")
     async def user_group(self, ctx: commands.Context):
-        await ctx.send(f"Please specify subcommands.", delete_after=5)
+        await ctx.send(responses.USER_NO_SUBCOMMANDS, delete_after=5)
 
     @user_group.command(
         name="register_me", description="Registers yourself with LilBot"
@@ -62,7 +61,9 @@ class Register(commands.Cog):
         try:
             invoker_user_id = ctx.author.id
             if not (check_master_user(invoker_user_id)):
-                await send_message_not_role(ctx, "master")
+                await ctx.send(
+                    responses.USER_NO_COMMAND_PERMISSIONS.format(role="master")
+                )
                 return
 
             await self.database_register(ctx, user)
@@ -77,7 +78,9 @@ class Register(commands.Cog):
         try:
             invoker_user_id = ctx.author.id
             if not (check_master_user(invoker_user_id)):
-                await send_message_not_role(ctx, "master")
+                await ctx.send(
+                    responses.USER_NO_COMMAND_PERMISSIONS.format(role="master")
+                )
                 return
 
             await self.database_deregister(ctx, user)
@@ -93,11 +96,13 @@ class Register(commands.Cog):
         try:
             invoker_user_id = ctx.author.id
             if not (check_master_user(invoker_user_id)):
-                await send_message_not_role(ctx, "master")
+                await ctx.send(
+                    responses.USER_NO_COMMAND_PERMISSIONS.format(role="master")
+                )
                 return
 
             if not self.db.is_user_registered(user.id):
-                await ctx.send(f"{user.name} is not even registered!")
+                await ctx.send(responses.USER_NOT_REGISTERED.format(name=user.name))
                 return
 
             self.db.update_user_role(user.id, role)
@@ -109,7 +114,7 @@ class Register(commands.Cog):
     async def user_info(self, ctx: commands.Context, user: discord.User):
         try:
             if not self.db.is_user_registered(user.id):
-                await ctx.send(f"{user.name} is not even registered!")
+                await ctx.send(responses.USER_NOT_REGISTERED.format(name=user.name))
                 return
 
             user_role = self.db.get_user_role(user.id)

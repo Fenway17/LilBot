@@ -1,5 +1,8 @@
 # INSTRUCTIONS
 
+**REQUIREMENTS**
+Install and add FFmpeg to PATH
+
 **NPM SCRIPTS**
 Uses Node.js
 Install NPM dependencies

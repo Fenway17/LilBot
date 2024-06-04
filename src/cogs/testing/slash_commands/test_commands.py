@@ -2,7 +2,8 @@ import os
 import discord
 from discord import app_commands
 from discord.ext import commands
-from utils.permissions import check_developer_user, send_message_not_role
+import utils.responses as responses
+from utils.permissions import check_developer_user
 
 TEST_SERVER_ID = os.getenv("TEST_SERVER_ID")
 
@@ -22,7 +23,9 @@ class TestCommandsSlash(commands.Cog):
     )
     async def test_command(self, interaction: discord.Interaction):
         if not check_developer_user(interaction.user.id):
-            await send_message_not_role(interaction, "developer")
+            await interaction.response.send(
+                responses.USER_NO_COMMAND_PERMISSIONS.format(role="developer")
+            )
             return
 
         await interaction.response.send_message("Hello!")

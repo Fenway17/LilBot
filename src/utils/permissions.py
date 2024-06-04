@@ -1,6 +1,4 @@
 import os
-from typing import Union
-import discord
 from discord.ext import commands
 from database.sqlite_database import SQLiteDatabase
 
@@ -22,29 +20,7 @@ def check_developer_user(user_id: int):
 
 
 def check_admin_user(user_id):  # checks for server/guild admins
-    if check_master_user(user_id):
+    if check_developer_user(user_id):
         return True
     # TODO: add checks for admin users as well
     return False
-
-
-async def send_message_not_role(
-    ctx_or_interaction: Union[commands.Context, discord.Interaction],
-    role: str = "admin",
-):
-    message = f"Unable to use command, not {role} user."
-    # intakes either discord commands context or discord interactions
-    if isinstance(ctx_or_interaction, commands.Context):
-        # related to regular prefix commands
-        ctx = ctx_or_interaction
-        if ctx.interaction:
-            # related to hybrid commands (they use both context and interactions)
-            await interaction.response.send_message(message)
-        else:  # is actually a regular prefix command
-            await ctx.send(message)
-    elif isinstance(ctx_or_interaction, discord.Interaction):
-        # related to slash command interactions
-        interaction = ctx_or_interaction
-        await interaction.response.send_message(message)
-    else:
-        raise ValueError("Invalid argument type.")

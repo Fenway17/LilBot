@@ -1,4 +1,5 @@
 from discord.ext import commands
+import utils.responses as responses
 
 
 class ErrorHandler(commands.Cog):
@@ -10,17 +11,13 @@ class ErrorHandler(commands.Cog):
         self, ctx: commands.Context, error
     ):  # handles errors for regular prefix commands
         if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send("Missing input. Please provide inputs.", delete_after=10)
+            await ctx.send(responses.USER_MISSING_INPUT, delete_after=10)
         elif isinstance(error, commands.BadArgument):
-            await ctx.send(
-                "Bad input. Please provide correct types of inputs.", delete_after=10
-            )
+            await ctx.send(responses.USER_INVALID_INPUT, delete_after=10)
         elif isinstance(error, commands.CommandInvokeError):
-            await ctx.send("Error invoking the command.", delete_after=10)
+            await ctx.send(responses.BOT_INVOKE_COMMAND_ERROR, delete_after=10)
         else:
-            await ctx.send(
-                "Error occurred while processing the command.", delete_after=10
-            )
+            await ctx.send(responses.BOT_PROCESS_COMMAND_ERROR, delete_after=10)
         # log the error for debugging
         print(f"Prefix command error: {error}")
 
