@@ -1,7 +1,8 @@
 import os
 import discord
 from discord.ext import commands
-from utils.permissions import check_developer_user, send_message_not_role
+import utils.responses as responses
+from utils.permissions import check_developer_user
 
 TEST_SERVER_ID = os.getenv("TEST_SERVER_ID")
 
@@ -19,7 +20,9 @@ class TestCommandsHybrid(commands.Cog):
     )
     async def test_single(self, ctx: commands.Context, arg):
         if not check_developer_user(ctx.author.id):
-            await send_message_not_role(ctx, "developer")
+            await ctx.send(
+                responses.USER_NO_COMMAND_PERMISSIONS.format(role="developer")
+            )
             return
         await ctx.send(f"argument: {arg}")
 
@@ -30,7 +33,9 @@ class TestCommandsHybrid(commands.Cog):
         self, ctx, *, arg
     ):  # takes arguments as one big line of text
         if not check_developer_user(ctx.author.id):
-            await send_message_not_role(ctx, "developer")
+            await ctx.send(
+                responses.USER_NO_COMMAND_PERMISSIONS.format(role="developer")
+            )
             return
 
         await ctx.send(arg)

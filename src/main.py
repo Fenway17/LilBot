@@ -27,10 +27,10 @@ intents.message_content = True
 bot: commands.Bot = commands.Bot(command_prefix=get_prefix, intents=intents)
 
 initial_extensions = [
-    "cogs.prefix_commands.test_commands",
-    "cogs.prefix_commands.greet",
-    "cogs.slash_commands.test_commands",
-    "cogs.hybrid_commands.test_commands",
+    "cogs.testing.prefix_commands.test_commands",
+    "cogs.testing.prefix_commands.greet",
+    "cogs.testing.slash_commands.test_commands",
+    "cogs.testing.hybrid_commands.test_commands",
     "cogs.music.youtube",
     "cogs.register",
     "cogs.message",

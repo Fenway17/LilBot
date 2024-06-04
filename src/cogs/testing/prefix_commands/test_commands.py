@@ -1,7 +1,8 @@
 import os
 import discord
 from discord.ext import commands
-from utils.permissions import check_developer_user, send_message_not_role
+import utils.responses as responses
+from utils.permissions import check_developer_user
 
 TEST_SERVER_ID = os.getenv("TEST_SERVER_ID")
 
@@ -14,7 +15,9 @@ class TestCommandsPrefix(commands.Cog):
     @commands.command(name="test", description="Test multiple arguments input")
     async def test_multiple(self, ctx, *args):
         if not check_developer_user(ctx.author.id):
-            await send_message_not_role(ctx, "developer")
+            await ctx.send(
+                responses.USER_NO_COMMAND_PERMISSIONS.format(role="developer")
+            )
             return
 
         arguments = ", ".join(args)
@@ -27,7 +30,9 @@ class TestCommandsPrefix(commands.Cog):
         self, ctx, *, arg
     ):  # takes arguments as one big line of text
         if not check_developer_user(ctx.author.id):
-            await send_message_not_role(ctx, "developer")
+            await ctx.send(
+                responses.USER_NO_COMMAND_PERMISSIONS.format(role="developer")
+            )
             return
 
         await ctx.send(arg)

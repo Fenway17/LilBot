@@ -1,6 +1,4 @@
 import os
-from typing import Union
-import discord
 from discord.ext import commands
 from database.sqlite_database import SQLiteDatabase
 
@@ -26,11 +24,3 @@ def check_admin_user(user_id):  # checks for server/guild admins
         return True
     # TODO: add checks for admin users as well
     return False
-
-
-async def send_message_not_role(
-    ctx: commands.Context,
-    role: str = "admin",
-):
-    message = f"Unable to use command, not {role} user."
-    await ctx.send(message)
