@@ -10,11 +10,13 @@ Built using [discord.py](https://github.com/Rapptz/discord.py "discord.py GitHub
 
 ## Features
 
-| Function                      | Description | Command Group | Command     |
-| :---------------------------- | :---------- | :------------ | :---------- |
-| Play a Youtube video in voice | PLACEHOLDER | /youtube      | play        |
-| PLACEHOLDER                   | PLACEHOLDER | PLACEHOLDER   | PLACEHOLDER |
-| PLACEHOLDER                   | PLACEHOLDER | PLACEHOLDER   | PLACEHOLDER |
+| Function                | Description | Command Group | Command      |
+| :---------------------- | :---------- | :------------ | :----------- |
+| Play a Youtube video    | PLACEHOLDER | /youtube      | play         |
+| Skip music              | PLACEHOLDER | /youtube      | next OR skip |
+| Repeat a track or queue | PLACEHOLDER | /youtube      | repeat       |
+| Repeat a track or queue | PLACEHOLDER | /youtube      | repeat       |
+| Repeat a track or queue | PLACEHOLDER | /youtube      | repeat       |
 
 Features to implement
 
