@@ -4,6 +4,10 @@ USER_NO_COMMAND_PERMISSIONS = "Unable to use command, not **{role}** user."
 USER_NO_SUBCOMMANDS = "No subcommands given. Please specify subcommands."
 USER_NOT_VOICE_CONNECTED = "Connect to a voice channel first!"
 USER_INVALID_INPUT = "Invalid input used. Please use correct inputs."
+USER_MISSING_INPUT = "Missing input. Please provide inputs."
+
+BOT_INVOKE_COMMAND_ERROR = "Error invoking the command."
+BOT_PROCESS_COMMAND_ERROR = "Error occurred while processing the command."
 
 BOT_MOVE_VOICE_CHANNEL = "Moving to another voice channel!"
 BOT_JOIN_USER_CHANNEL = "Joined your voice channel!"
@@ -31,9 +35,12 @@ MUSIC_VOLUME_RANGE = "Volume must be between **{min}** and **{max}**!"
 MUSIC_USE_REPEAT_MODES = "Please use these repeat modes: **{string_list}**"
 MUSIC_REPEAT_MODE_SET = "Repeat mode set to: **{mode}**!"
 
-
 # REGISTRATION RELATED
 USER_ALR_REGISTERED = "__{name}__ is already registered!"
 USER_REGISTERED = "__{name}__ has been registered!"
 USER_DEREGISTERED = "__{name}__ has been deregistered!"
 USER_NOT_REGISTERED = "__{name}__ is not registered!"
+
+# MESSAGE MANAGEMENT RELATED
+MESSAGE_INVALID_DELETE = "Delete {number} messages...? Huh?"
+MESSAGE_DELETED = "Deleted {number} messages."
