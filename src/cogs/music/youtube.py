@@ -302,7 +302,7 @@ class YoutubeMusic(commands.Cog):
         else:
             await ctx.send(responses.MUSIC_INVALID_QUEUE_INDEX, silent=True)
 
-    @youtube.command(name="repeat", help="Toggle repeat mode")
+    @youtube.command(name="repeat", help="Change repeat mode")
     @app_commands.describe(mode="Repeat mode")
     @app_commands.choices(
         mode=[
