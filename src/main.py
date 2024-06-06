@@ -32,6 +32,7 @@ initial_extensions = [
     "cogs.testing.slash_commands.test_commands",
     "cogs.testing.hybrid_commands.test_commands",
     "cogs.music.youtube",
+    "cogs.vote.vote",
     "cogs.register",
     "cogs.message",
     "cogs.error_handler",

@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from cogs.vote.views.yes_no_view import YesNoView
 import utils.responses as responses
 
 class Vote(commands.Cog):
@@ -11,11 +12,13 @@ class Vote(commands.Cog):
     async def user_group(self, ctx: commands.Context):
         await ctx.send(responses.USER_NO_SUBCOMMANDS, delete_after=5)
 
-    @user_group.command(
-        name="yes/no", description="Creates a custom yes/no vote"
-    )
+    @user_group.command(name="yes-no", description="Creates a custom yes/no vote")
     async def yes_no(self, ctx: commands.Context, *, question: str):
-        pass
+        view=YesNoView()
+        embed = discord.Embed(title=question, description="_Vote below!_")
+        embed.add_field(name="---Yes---", value="__Total: 0__", inline=True)
+        embed.add_field(name="---No---", value="__Total: 0__", inline=True)
+        await ctx.send(embed=embed, view=view)
 
 
 async def setup(bot: commands.Bot):  # required for adding cog to the bot
