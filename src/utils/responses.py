@@ -44,3 +44,6 @@ USER_NOT_REGISTERED = "__{name}__ is not registered!"
 # MESSAGE MANAGEMENT RELATED
 MESSAGE_INVALID_DELETE = "Delete {number} messages...? Huh?"
 MESSAGE_DELETED = "Deleted {number} messages."
+
+# VOTING RELATED
+VOTING_TOO_MANY_OPTIONS = "Too many options, please limit it to {number}"
