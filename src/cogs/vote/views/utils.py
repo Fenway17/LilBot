@@ -1,13 +1,13 @@
 import re
 import discord
 
-# adds a number to the first string of numbers in a string and returns new string
+# adds a number to the last string of numbers in a string and returns new string
 def add_number_to_string(full_string: str, number: int):
     # find the number in the string
-    match = re.search(r"(\d+)", full_string)  # match to a string of digits
-    if match:
+    digits = re.findall(r"(\d+)", full_string)  # match to a string of digits
+    if digits[-1]: # find last set of digits
         # Extract the number
-        initial_number = int(match.group(1))
+        initial_number = int(digits[-1])
         incremented_number = initial_number + number
         # replace the old number
         return full_string.replace(str(initial_number), str(incremented_number))

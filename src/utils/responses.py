@@ -5,6 +5,8 @@ USER_NO_SUBCOMMANDS = "No subcommands given. Please specify subcommands."
 USER_NOT_VOICE_CONNECTED = "Connect to a voice channel first!"
 USER_INVALID_INPUT = "Invalid input used. Please use correct inputs."
 USER_MISSING_INPUT = "Missing input. Please provide inputs."
+USER_DUPLICATE_INPUTS = "Duplicate inputs. Please provide unique inputs."
+USER_NOT_AUTHOR = "Denied, user is not the author."
 
 BOT_INVOKE_COMMAND_ERROR = "Error invoking the command."
 BOT_PROCESS_COMMAND_ERROR = "Error occurred while processing the command."

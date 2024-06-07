@@ -1,9 +1,11 @@
 import discord
+from cogs.vote.views.close_vote_button import CloseVoteButton
 import cogs.vote.views.utils as utils
 
 class YesNoView(discord.ui.View):
     def __init__(self, *, timeout=None):
         super().__init__(timeout=timeout)
+        self.add_item(CloseVoteButton())
 
     # assumes that the vote contains an embed that has fields that are separated by newlines
     # eg.
