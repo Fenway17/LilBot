@@ -15,7 +15,6 @@ class Vote(commands.Cog):
     async def user_group(self, ctx: commands.Context):
         await ctx.send(responses.USER_NO_SUBCOMMANDS, delete_after=5)
 
-    # TODO: ADD a way to close the vote (maybe via timeout)
     @user_group.command(name="yes-no", description="Creates a custom yes/no vote")
     @app_commands.describe(question="Provide a yes/no question")
     async def yes_no(self, ctx: commands.Context, *, question: str):
