@@ -1,6 +1,7 @@
 import discord
 import cogs.vote.views.utils as utils
 
+
 # button representing an option in a multiple options vote
 # displays the number of the option in the vote
 class OptionButton(discord.ui.Button):

@@ -1,11 +1,12 @@
 import re
 import discord
 
+
 # adds a number to the last string of numbers in a string and returns new string
 def add_number_to_string(full_string: str, number: int):
     # find the number in the string
     digits = re.findall(r"(\d+)", full_string)  # match to a string of digits
-    if digits[-1]: # find last set of digits
+    if digits[-1]:  # find last set of digits
         # Extract the number
         initial_number = int(digits[-1])
         incremented_number = initial_number + number
@@ -14,9 +15,11 @@ def add_number_to_string(full_string: str, number: int):
 
     return full_string
 
+
 # adds a discord user to a list string separated by "\n" newlines and returns new string
 def add_user_to_string_list(list_string: str, user: discord.User):
     return list_string + "\n" + user.display_name + " (" + user.name + ")"
+
 
 # removes a discord user to a list string separated by "\n" newlines and returns new string
 def remove_user_from_string_list(list_string: str, user: discord.User):

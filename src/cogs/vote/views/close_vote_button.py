@@ -5,6 +5,7 @@ import cogs.vote.views.utils as utils
 CLOSE_TEXT = "Close Vote"
 OPEN_TEXT = "Open Vote"
 
+
 # button to disable all view's buttons to close the vote
 class CloseVoteButton(discord.ui.Button):
     def __init__(self):
@@ -19,7 +20,9 @@ class CloseVoteButton(discord.ui.Button):
         embed = interaction.message.embeds[0]
         if interaction.user.id != int(embed.author.name):
             # prevent non-author from closing vote
-            return await interaction.response.send_message(responses.USER_NOT_AUTHOR, delete_after=5)
+            return await interaction.response.send_message(
+                responses.USER_NOT_AUTHOR, delete_after=5
+            )
 
         view: discord.ui.View = self.view
         for child in view.children:
@@ -41,6 +44,6 @@ class CloseVoteButton(discord.ui.Button):
             # change button to close vote button
             self.label = CLOSE_TEXT
             self.style = discord.ButtonStyle.red
-        self.disabled = False # reenable; disables itself in previous for loop
+        self.disabled = False  # reenable; disables itself in previous for loop
 
         await interaction.response.edit_message(embed=embed, view=self.view)

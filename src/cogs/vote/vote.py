@@ -27,22 +27,29 @@ class Vote(commands.Cog):
         embed.add_field(name="---NO (0)---", value="", inline=True)
         await ctx.send(embed=embed, view=view)
 
-    @user_group.command(name="multiple-options", description="Creates a custom vote with multiple options")
+    @user_group.command(
+        name="multiple-options",
+        description="Creates a vote with multiple options",
+    )
     @app_commands.describe(title="Provide a title for the vote")
-    @app_commands.describe(options="Provide up to 10 (COMMA-separated) options to vote on")
-    @app_commands.describe(single_only="Force voting for one option only (default: True)")
-    async def yes_no(self, ctx: commands.Context, title: str, options: str, single_only: bool = True):
+    @app_commands.describe(options="Up to 10 (COMMA-separated) options to vote on")
+    @app_commands.describe(single_only="Force one vote option only (default: True)")
+    async def yes_no(
+        self, ctx: commands.Context, title: str, options: str, single_only: bool = True
+    ):
         option_list = [option.strip() for option in options.split(",")]
         if len(option_list) > 10:
             # prevent creating more than 10 options
-            return ctx.send(responses.VOTING_TOO_MANY_OPTIONS.format(number=10), delete_after=10)
+            return ctx.send(
+                responses.VOTING_TOO_MANY_OPTIONS.format(number=10), delete_after=10
+            )
 
         # check for duplicates
-        option_set = set(option_list) # sets do not allow duplicates
+        option_set = set(option_list)  # sets do not allow duplicates
         if len(option_list) != len(option_set):
             # prevent duplicate options
             return ctx.send(responses.USER_DUPLICATE_INPUTS, delete_after=10)
-        
+
         # view used to create buttons
         view = MultipleOptionsView(options=option_list, single_only=single_only)
         # embed used to create vote table
@@ -52,6 +59,7 @@ class Vote(commands.Cog):
         for index, option in enumerate(option_list):
             embed.add_field(name=f"{index+1}) {option} (0)", value="", inline=True)
         await ctx.send(embed=embed, view=view)
+
 
 async def setup(bot: commands.Bot):  # required for adding cog to the bot
     await bot.add_cog(Vote(bot))
