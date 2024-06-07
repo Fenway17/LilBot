@@ -67,3 +67,12 @@ _us-central iowa_
 - source bot-env/bin/activate
 - pip install -r requirements.txt
 - nohup python3 -u src/main.py &> activity.log &
+
+Shutdown bot:
+
+- ps
+- kill <PID>
+  OR
+- kill -9 <PID> (forcefully kill)
+  OR
+- pkill -f 'python3 src/main.py'
