@@ -1,7 +1,14 @@
-# This example requires the 'message_content' intent.
 import os
+from pathlib import Path
 import discord
 from discord.ext import commands
+from dotenv import load_dotenv
+
+# Get the base directory where the .env file is located
+base_dir = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env file in the base directory
+load_dotenv(dotenv_path=base_dir / ".env")
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 TEST_SERVER_ID = os.getenv("TEST_SERVER_ID")

@@ -57,3 +57,13 @@ Run it while inside the activated virtual environment
 Run it while inside the activated virtual environment
 
 - py -3 src/main.py
+
+**RUNNING THE BOT ON CLOUD**
+Using Ubuntu / Linux:
+Free tier (as of 07/06/2024) Google Compute _e2-micro_ VM
+_us-central iowa_
+30 GB-months _standard persistent_ disk
+
+- source bot-env/bin/activate
+- pip install -r requirements.txt
+- nohup python3 -u src/main.py &> activity.log &
