@@ -46,9 +46,7 @@ class Message(commands.Cog):
             isinstance(ctx.author, discord.Member)
             and not ctx.author.guild_permissions.manage_messages
         ):
-            await ctx.send(
-                responses.USER_NO_COMMAND_PERMISSIONS.format(role="admin")
-            )
+            await ctx.send(responses.USER_NO_COMMAND_PERMISSIONS.format(role="admin"))
             return
 
         if number <= 0:
@@ -65,18 +63,22 @@ class Message(commands.Cog):
         deleted_messages = await ctx.channel.purge(
             limit=number, before=ctx.interaction.created_at
         )
-        await ctx.send(responses.MESSAGE_DELETED.format(number=len(deleted_messages)), delete_after=5)
+        await ctx.send(
+            responses.MESSAGE_DELETED.format(number=len(deleted_messages)),
+            delete_after=5,
+        )
 
-    @message.command(name="clean", description="Deletes bot's messages in the last 100 (default) messages")
+    @message.command(
+        name="clean",
+        description="Deletes bot's messages in the last 100 (default) messages",
+    )
     @app_commands.describe(number="Number between 0-100")
     async def clean_messages(self, ctx: commands.Context, number: int = 100):
         if not check_admin_user(ctx.author.id) and (
             isinstance(ctx.author, discord.Member)
             and not ctx.author.guild_permissions.manage_messages
         ):
-            await ctx.send(
-                responses.USER_NO_COMMAND_PERMISSIONS.format(role="admin")
-            )
+            await ctx.send(responses.USER_NO_COMMAND_PERMISSIONS.format(role="admin"))
             return
 
         if number <= 0:
@@ -91,12 +93,18 @@ class Message(commands.Cog):
         # defer command; else need to respond in 3 seconds
         await ctx.defer()  # defers response if slash command was used
         deleted_messages = await ctx.channel.purge(
-            limit=number, before=ctx.interaction.created_at, check=self.is_bot_author,
+            limit=number,
+            before=ctx.interaction.created_at,
+            check=self.is_bot_author,
         )
-        await ctx.send(responses.MESSAGE_DELETED.format(number=len(deleted_messages)), delete_after=5)
+        await ctx.send(
+            responses.MESSAGE_DELETED.format(number=len(deleted_messages)),
+            delete_after=5,
+        )
 
     def is_bot_author(self, message: discord.Message):
         return message.author.id == self.bot.user.id
+
 
 async def setup(bot: commands.Bot) -> bool:  # required for adding cog to the bot
     await bot.add_cog(Message(bot))
