@@ -70,7 +70,8 @@ _us-central iowa_
 
 Shutdown bot:
 
-- ps
+- ps -ef
+
 - kill <PID>
   OR
 - kill -9 <PID> (forcefully kill)
