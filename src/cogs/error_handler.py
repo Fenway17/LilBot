@@ -19,7 +19,7 @@ class ErrorHandler(commands.Cog):
         else:
             await ctx.send(responses.BOT_PROCESS_COMMAND_ERROR, delete_after=10)
         # log the error for debugging
-        print(f"Prefix command error: {error}")
+        print(f"Command error: {error}")
 
 
 async def setup(bot: commands.Bot):  # required for adding cog to the bot
