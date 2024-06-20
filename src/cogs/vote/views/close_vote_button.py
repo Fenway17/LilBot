@@ -8,17 +8,17 @@ OPEN_TEXT = "Open Vote"
 
 # button to disable all view's buttons to close the vote
 class CloseVoteButton(discord.ui.Button):
-    def __init__(self):
-        self.is_closed = False
+    def __init__(self, author_id):
         super().__init__(label=CLOSE_TEXT, style=discord.ButtonStyle.red)
+        self.is_closed = False
+        self.author_id = author_id
 
     # assumes view has buttons to disable
-    # assumes original vote has an embed with an author which is the user id of the vote author
 
     async def callback(self, interaction: discord.Interaction):
         # check if author is clicking button
         embed = interaction.message.embeds[0]
-        if interaction.user.id != int(embed.author.name):
+        if interaction.user.id != int(self.author_id):
             # prevent non-author from closing vote
             return await interaction.response.send_message(
                 responses.USER_NOT_AUTHOR, delete_after=5

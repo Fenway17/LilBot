@@ -18,10 +18,8 @@ class Vote(commands.Cog):
     @user_group.command(name="yes-no", description="Creates a custom yes/no vote")
     @app_commands.describe(question="Provide a yes/no question")
     async def yes_no(self, ctx: commands.Context, *, question: str):
-        view = YesNoView()
+        view = YesNoView(author_id=ctx.author.id)
         embed = discord.Embed(title=question, description="_Vote now!_")
-        # record author's id
-        embed.set_author(name=ctx.author.id)
         embed.add_field(name="---YES (0)---", value="", inline=True)
         embed.add_field(name="---NO (0)---", value="", inline=True)
         await ctx.send(embed=embed, view=view)
@@ -50,11 +48,10 @@ class Vote(commands.Cog):
             return ctx.send(responses.USER_DUPLICATE_INPUTS, delete_after=10)
 
         # view used to create buttons
-        view = MultipleOptionsView(options=option_list, single_only=single_only)
+        view = MultipleOptionsView(options=option_list, author_id=ctx.author.id, single_only=single_only)
         # embed used to create vote table
         embed = discord.Embed(title=title, description="_Vote now!_")
-        # record author's id
-        embed.set_author(name=ctx.author.id)
+
         for index, option in enumerate(option_list):
             embed.add_field(name=f"{index+1}) {option} (0)", value="", inline=True)
         await ctx.send(embed=embed, view=view)
