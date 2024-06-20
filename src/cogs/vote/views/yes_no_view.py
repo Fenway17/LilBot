@@ -4,9 +4,10 @@ import cogs.vote.views.utils as utils
 
 
 class YesNoView(discord.ui.View):
-    def __init__(self, *, timeout=None):
+    def __init__(self, *, author_id, timeout=None):
         super().__init__(timeout=timeout)
-        self.add_item(CloseVoteButton())
+        self.author_id = author_id
+        self.add_item(CloseVoteButton(author_id))
 
     # assumes that the vote contains an embed that has fields that are separated by newlines
     # eg.
