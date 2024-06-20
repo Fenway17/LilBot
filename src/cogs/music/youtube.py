@@ -50,11 +50,11 @@ class YoutubeMusic(commands.Cog):
         self.bot: commands.Bot = bot
         self.volume = 0.15
 
-        # dictionary with keys: guild ids and values: list of (song url, title)
-        self.song_queue: Dict[int, List[Tuple[str, str]]] = {}
-        # dictionary with keys: guild ids and value: (song url, title)
+        # dictionary with keys: guild ids and values: list of (song url, title, duration)
+        self.song_queue: Dict[int, List[Tuple[str, str, str]]] = {}
+        # dictionary with keys: guild ids and value: (song url, title, duration)
         # used in edge case where queue is cleared while song is still playing
-        self.current_song: Dict[int, Tuple[str, str]] = {}
+        self.current_song: Dict[int, Tuple[str, str, str]] = {}
         # dictionary with keys: guild ids and value: queue index
         self.current_song_index: Dict[int, int] = {}
         # dictionary with keys: guild ids and value: str (off / queue / single)
@@ -87,8 +87,9 @@ class YoutubeMusic(commands.Cog):
             # check if author and bot is in same voice channel
             if not author_channel == bot_channel:
                 raise commands.CheckFailure(responses.USER_NOT_IN_BOT_CHANNEL)
-            
+
             return True
+
         return commands.check(predicate)
 
     @youtube.command(name="join", help="Join the voice channel")
@@ -117,9 +118,9 @@ class YoutubeMusic(commands.Cog):
     async def leave(self, ctx: commands.Context):
         if ctx.voice_client is not None:
             await ctx.voice_client.disconnect()
-            return await ctx.send(responses.BOT_LEAVE_VOICE_CHANNEL)
+            return await ctx.send(responses.BOT_LEAVE_VOICE_CHANNEL, delete_after=10)
 
-        await ctx.send(responses.BOT_NOT_VOICE_CONNECTED, silent=True)
+        await ctx.send(responses.BOT_NOT_VOICE_CONNECTED, silent=True, delete_after=5)
 
     # initialize entries for a guild
     def guild_initialize(self, guild_id: int):
@@ -147,6 +148,7 @@ class YoutubeMusic(commands.Cog):
         if ctx.guild.id not in self.song_queue:
             self.guild_initialize(ctx.guild.id)
 
+        # process search query
         if search:
             # Check if search input is a URL
             is_playlist_url = YOUTUBE_PLAYLIST_URL_REGEX.match(search)
@@ -176,22 +178,33 @@ class YoutubeMusic(commands.Cog):
                 # add all entries to queue
                 next_queue_index = len(self.song_queue)
                 number_of_entries = len(entries)
+                duration = 0
                 for entry in entries:
                     url2 = entry["url"]
                     title = entry.get("title", "Unknown Title")
-                    duration = entry.get('duration', 0)  # in seconds
+                    duration = entry.get("duration", 0)  # in seconds
+                    duration = arithmetic.stringify_hrs_mins_secs(duration)
                     # add to queue
-                    self.song_queue[ctx.guild.id].append((url2, title))
+                    self.song_queue[ctx.guild.id].append((url2, title, duration))
 
                 # inform user
                 if is_playlist_url:
                     playlist_title = info.get("title", "Unknown Playlist")
                     await ctx.send(
-                        responses.MUSIC_QUEUE_ADD_PLAYLIST.format(title=playlist_title, number=number_of_entries)
+                        responses.MUSIC_QUEUE_ADD_PLAYLIST.format(
+                            title=playlist_title, number=number_of_entries
+                        )
                     )
                 else:
                     video_title = entries[0].get("title", "Unknown Title")
-                    await ctx.send(responses.MUSIC_QUEUE_ADD.format(title=video_title, index=next_queue_index))
+                    title_bold = "**" + video_title + "**"
+                    embed = discord.Embed(title=title_bold, description=duration)
+                    await ctx.send(
+                        responses.MUSIC_QUEUE_ADD.format(
+                            title=video_title, index=next_queue_index
+                        ),
+                        embed=embed,
+                    )
 
         # attempt to play music
         if not ctx.voice_client.is_playing():
@@ -199,10 +212,13 @@ class YoutubeMusic(commands.Cog):
             await self.play_next(ctx)
         elif not search:
             # already playing song, and command was not a search
+            # display current song
+            title = self.current_song[ctx.guild.id][1]
+            title_bold = "**" + title + "**"
+            embed = discord.Embed(title=title_bold, description=duration)
             await ctx.send(
-                responses.MUSIC_CURRENT_MUSIC.format(
-                    title=self.current_song[ctx.guild.id][1]
-                ),
+                responses.MUSIC_CURRENT_MUSIC.format(title=title),
+                embed=embed,
                 silent=True,
             )
 
@@ -234,11 +250,15 @@ class YoutubeMusic(commands.Cog):
                 < len(self.song_queue[ctx.guild.id])
             ):
                 # extract url and title from song queue
-                next_song_url, next_song_title = self.song_queue[ctx.guild.id][
-                    self.current_song_index[ctx.guild.id]
-                ]
+                next_song_url, next_song_title, next_song_duration = self.song_queue[
+                    ctx.guild.id
+                ][self.current_song_index[ctx.guild.id]]
                 # update current song
-                self.current_song[ctx.guild.id] = (next_song_url, next_song_title)
+                self.current_song[ctx.guild.id] = (
+                    next_song_url,
+                    next_song_title,
+                    next_song_duration,
+                )
                 # stop and then play voice client
                 ctx.voice_client.stop()
                 ctx.voice_client.play(
@@ -248,8 +268,12 @@ class YoutubeMusic(commands.Cog):
                     ),
                     after=lambda e: self.bot.loop.create_task(self.play_next(ctx)),
                 )
+                # display next song
+                title_bold = "**" + next_song_title + "**"
+                embed = discord.Embed(title=title_bold, description=next_song_duration)
                 await ctx.send(
-                    responses.MUSIC_CURRENT_MUSIC.format(title=next_song_title)
+                    responses.MUSIC_CURRENT_MUSIC.format(title=next_song_title),
+                    embed=embed,
                 )
             else:
                 # do not continue playing music
@@ -314,8 +338,9 @@ class YoutubeMusic(commands.Cog):
     async def next(self, ctx: commands.Context):
         if ctx.voice_client.is_playing() or ctx.voice_client.is_paused():
             # stop playing current song, which SHOULD play next song
+            current_song_title = self.current_song[ctx.guild.id][1]
             ctx.voice_client.stop()
-            await ctx.send(responses.MUSIC_SKIP)
+            await ctx.send(responses.MUSIC_SKIP.format(title=current_song_title))
 
     @youtube.command(name="skip", help="Skips current song in the queue")
     @check_same_channel()
@@ -381,11 +406,13 @@ class YoutubeMusic(commands.Cog):
         if ctx.guild.id in self.song_queue and len(self.song_queue[ctx.guild.id]) > 0:
             currently_playing_index = self.current_song_index[ctx.guild.id]
             song_list = []
-            for index, (url, title) in enumerate(self.song_queue[ctx.guild.id]):
+            for index, (url, title, duration) in enumerate(
+                self.song_queue[ctx.guild.id]
+            ):
                 if index == currently_playing_index:
-                    song_list.append(f"**{index + 1}) {title}**")
+                    song_list.append(f"**{index + 1}) {title} ({duration})**")
                 else:
-                    song_list.append(f"{index + 1}) {title}")
+                    song_list.append(f"{index + 1}) {title} ({duration})")
 
             queue_string = "\n".join(song_list)
             await ctx.send(f"__Current queue:__\n{queue_string}")
@@ -395,9 +422,14 @@ class YoutubeMusic(commands.Cog):
     @youtube.command(name="current", description="Displays the current song")
     async def current(self, ctx: commands.Context):
         if ctx.guild.id in self.current_song:
-            current_song_url, current_song_title = self.current_song[ctx.guild.id]
+            current_song_url, current_song_title, current_song_duration = (
+                self.current_song[ctx.guild.id]
+            )
+            title_bold = "**" + current_song_title + "**"
+            embed = discord.Embed(title=title_bold, description=current_song_duration)
             await ctx.send(
-                responses.MUSIC_CURRENT_MUSIC.format(title=current_song_title)
+                responses.MUSIC_CURRENT_MUSIC.format(title=current_song_title),
+                embed=embed,
             )
         else:
             await ctx.send(responses.MUSIC_NO_MUSIC_PLAYING, silent=True)

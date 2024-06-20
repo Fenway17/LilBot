@@ -18,7 +18,9 @@ BOT_LEAVE_VOICE_CHANNEL = "Leaving voice channel!"
 BOT_NOT_VOICE_CONNECTED = "I'm not connected to a voice channel!"
 
 # YOUTUBE MUSIC PLAYER RESPONSES
-MUSIC_QUEUE_ADD_PLAYLIST = "Added playlist to queue: __{title}__ with **{number}** tracks!"
+MUSIC_QUEUE_ADD_PLAYLIST = (
+    "Added playlist to queue: __{title}__ with **{number}** tracks!"
+)
 MUSIC_QUEUE_ADD = "Added to queue: __{title}__ to queue index **{index}**!"
 MUSIC_QUEUE_END = "End of music queue!"
 MUSIC_QUEUE_CLEAR = "Cleared the music queue!"
@@ -29,7 +31,7 @@ MUSIC_PLAYING_QUEUE_INDEX = "Playing song at index **{index}**!"
 MUSIC_INVALID_QUEUE_INDEX = "Invalid queue index number!"
 MUSIC_CURRENT_MUSIC = "Currently playing: __{title}__"
 MUSIC_NO_MUSIC_PLAYING = "No music is playing!"
-MUSIC_SKIP = "Skipping current song!"
+MUSIC_SKIP = "Skipping current song:  __{title}__"
 MUSIC_PAUSE = "Paused the music player!"
 MUSIC_NOT_PAUSED = "The music player is not paused!"
 MUSIC_RESUME = "Resumed music player!"

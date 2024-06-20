@@ -33,7 +33,7 @@ class Vote(commands.Cog):
     @app_commands.describe(title="Provide a title for the vote")
     @app_commands.describe(options="Up to 10 (COMMA-separated) options to vote on")
     @app_commands.describe(single_only="Force one vote option only (default: True)")
-    async def yes_no(
+    async def multiple_options(
         self, ctx: commands.Context, title: str, options: str, single_only: bool = True
     ):
         option_list = [option.strip() for option in options.split(",")]

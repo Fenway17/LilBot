@@ -5,6 +5,9 @@
 .env.production.local
 .env.local
 
+# SpotiPy
+.cache
+
 # Database
 *.db
 
