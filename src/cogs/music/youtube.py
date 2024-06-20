@@ -6,7 +6,8 @@ from discord import app_commands
 import yt_dlp as youtube_dl
 
 import utils.responses as responses
-from utils.permissions import check_developer_user
+from utils.permissions import check_developer_user, check_master_user
+import utils.arithmetic as arithmetic
 
 YOUTUBE_URL_REGEX = re.compile(
     r"(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/.+"
@@ -66,27 +67,53 @@ class YoutubeMusic(commands.Cog):
     async def youtube(self, ctx: commands.Context):
         await ctx.send(responses.USER_NO_SUBCOMMANDS, silent=True, delete_after=5)
 
+    # (decorator) check that author is in the same voice channel as the bot
+    def check_same_channel():
+        def predicate(ctx: commands.Context):
+            # master user bypasses check
+            # if check_master_user(ctx.author.id):
+            #     return True
+
+            # check author is in a voice channel
+            if not ctx.author.voice:
+                raise commands.CheckFailure(responses.USER_NOT_VOICE_CONNECTED)
+            author_channel = ctx.author.voice.channel
+
+            # check bot is in a voice channel
+            if not ctx.voice_client:
+                raise commands.CheckFailure(responses.BOT_NOT_VOICE_CONNECTED)
+            bot_channel = ctx.voice_client.channel
+
+            # check if author and bot is in same voice channel
+            if not author_channel == bot_channel:
+                raise commands.CheckFailure(responses.USER_NOT_IN_BOT_CHANNEL)
+            
+            return True
+        return commands.check(predicate)
+
     @youtube.command(name="join", help="Join the voice channel")
     async def join(self, ctx: commands.Context):
         if not ctx.author.voice:
-            await ctx.send(
+            return await ctx.send(
                 responses.USER_NOT_VOICE_CONNECTED, silent=True, delete_after=5
             )
-            return
 
         channel = ctx.author.voice.channel
 
         if ctx.voice_client is not None:
             # already in a channel somewhere
-            await ctx.send(responses.BOT_MOVE_VOICE_CHANNEL, silent=True)
+            await ctx.send(
+                responses.BOT_MOVE_VOICE_CHANNEL, silent=True, delete_after=10
+            )
             return await ctx.voice_client.move_to(channel)
 
         await channel.connect(
             self_deaf=True
         )  # ctx.voice_client will now have a discord.VoiceClient
-        await ctx.send(responses.BOT_JOIN_USER_CHANNEL, silent=True)
+        await ctx.send(responses.BOT_JOIN_USER_CHANNEL, silent=True, delete_after=10)
 
     @youtube.command(name="leave", help="Leave the voice channel")
+    @check_same_channel()
     async def leave(self, ctx: commands.Context):
         if ctx.voice_client is not None:
             await ctx.voice_client.disconnect()
@@ -147,9 +174,12 @@ class YoutubeMusic(commands.Cog):
                     entries = [info]  # make into single item list
 
                 # add all entries to queue
+                next_queue_index = len(self.song_queue)
+                number_of_entries = len(entries)
                 for entry in entries:
                     url2 = entry["url"]
                     title = entry.get("title", "Unknown Title")
+                    duration = entry.get('duration', 0)  # in seconds
                     # add to queue
                     self.song_queue[ctx.guild.id].append((url2, title))
 
@@ -157,11 +187,11 @@ class YoutubeMusic(commands.Cog):
                 if is_playlist_url:
                     playlist_title = info.get("title", "Unknown Playlist")
                     await ctx.send(
-                        responses.MUSIC_QUEUE_ADD_PLAYLIST.format(title=playlist_title)
+                        responses.MUSIC_QUEUE_ADD_PLAYLIST.format(title=playlist_title, number=number_of_entries)
                     )
                 else:
                     video_title = entries[0].get("title", "Unknown Title")
-                    await ctx.send(responses.MUSIC_QUEUE_ADD.format(title=video_title))
+                    await ctx.send(responses.MUSIC_QUEUE_ADD.format(title=video_title, index=next_queue_index))
 
         # attempt to play music
         if not ctx.voice_client.is_playing():
@@ -236,6 +266,7 @@ class YoutubeMusic(commands.Cog):
             await ctx.send(responses.MUSIC_QUEUE_EMPTY, silent=True)
 
     @youtube.command(name="pause", help="Pause the music player")
+    @check_same_channel()
     async def pause(self, ctx: commands.Context):
         if ctx.voice_client.is_playing():
             ctx.voice_client.pause()
@@ -244,6 +275,7 @@ class YoutubeMusic(commands.Cog):
             await ctx.send(responses.MUSIC_NO_MUSIC_PLAYING, silent=True)
 
     @youtube.command(name="resume", help="Resume the music player")
+    @check_same_channel()
     async def resume(self, ctx: commands.Context):
         if ctx.voice_client.is_paused():
             ctx.voice_client.resume()
@@ -252,12 +284,14 @@ class YoutubeMusic(commands.Cog):
             await ctx.send(responses.MUSIC_NOT_PAUSED, silent=True)
 
     @youtube.command(name="stop", help="Stop the music player")
+    @check_same_channel()
     async def stop(self, ctx: commands.Context):
         await ctx.invoke(self.leave)
 
     # TODO: Currently sets bot volume globally; might have unintended
     # effects in other servers; may need to convert volume into a dict
     @youtube.command(name="volume", help="Sets volume of the bot")
+    @check_same_channel()
     @app_commands.describe(volume="Number between 0-100")
     async def volume(self, ctx: commands.Context, volume: int):
         if not check_developer_user(ctx.author.id):
@@ -276,6 +310,7 @@ class YoutubeMusic(commands.Cog):
             await ctx.send(responses.BOT_NOT_VOICE_CONNECTED, silent=True)
 
     @youtube.command(name="next", help="Play the next song in the queue")
+    @check_same_channel()
     async def next(self, ctx: commands.Context):
         if ctx.voice_client.is_playing() or ctx.voice_client.is_paused():
             # stop playing current song, which SHOULD play next song
@@ -283,10 +318,12 @@ class YoutubeMusic(commands.Cog):
             await ctx.send(responses.MUSIC_SKIP)
 
     @youtube.command(name="skip", help="Skips current song in the queue")
+    @check_same_channel()
     async def skip(self, ctx: commands.Context):
         await ctx.invoke(self.next)
 
     @youtube.command(name="goto", help="Play the song at the queue index")
+    @check_same_channel()
     @app_commands.describe(index="Queue index number")
     async def goto(self, ctx: commands.Context, index: int):
         if ctx.guild.id in self.song_queue and 0 <= index - 1 < len(
@@ -303,6 +340,7 @@ class YoutubeMusic(commands.Cog):
             await ctx.send(responses.MUSIC_INVALID_QUEUE_INDEX, silent=True)
 
     @youtube.command(name="repeat", help="Change repeat mode")
+    @check_same_channel()
     @app_commands.describe(mode="Repeat mode")
     @app_commands.choices(
         mode=[
@@ -328,6 +366,7 @@ class YoutubeMusic(commands.Cog):
         await ctx.send(responses.MUSIC_REPEAT_MODE_SET.format(mode=mode.capitalize()))
 
     @youtube.command(name="clear", help="Clear the queue")
+    @check_same_channel()
     async def clear(self, ctx):
         if ctx.guild.id in self.song_queue:
             self.song_queue[ctx.guild.id] = []
@@ -364,6 +403,7 @@ class YoutubeMusic(commands.Cog):
             await ctx.send(responses.MUSIC_NO_MUSIC_PLAYING, silent=True)
 
     @youtube.command(name="remove", help="Remove a song from the queue by index")
+    @check_same_channel()
     @app_commands.describe(index="Queue index number")
     async def remove(self, ctx, index: int):
         if ctx.guild.id in self.song_queue and 0 <= index - 1 < len(

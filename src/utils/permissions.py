@@ -1,5 +1,4 @@
 import os
-from discord.ext import commands
 from database.sqlite_database import SQLiteDatabase
 
 

@@ -16,6 +16,9 @@ class ErrorHandler(commands.Cog):
             await ctx.send(responses.USER_INVALID_INPUT, delete_after=10)
         elif isinstance(error, commands.CommandInvokeError):
             await ctx.send(responses.BOT_INVOKE_COMMAND_ERROR, delete_after=10)
+        elif isinstance(error, commands.CheckFailure):
+            # check failure has its own error message already
+            await ctx.send(str(error))
         else:
             await ctx.send(responses.BOT_PROCESS_COMMAND_ERROR, delete_after=10)
         # log the error for debugging
