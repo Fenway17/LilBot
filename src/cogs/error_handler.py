@@ -11,13 +11,20 @@ class ErrorHandler(commands.Cog):
         self, ctx: commands.Context, error
     ):  # handles errors for regular prefix commands
         if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(responses.USER_MISSING_INPUT, delete_after=10)
+            await ctx.send(responses.USER_MISSING_INPUT, silent=True, delete_after=10)
         elif isinstance(error, commands.BadArgument):
-            await ctx.send(responses.USER_INVALID_INPUT, delete_after=10)
+            await ctx.send(responses.USER_INVALID_INPUT, silent=True, delete_after=10)
         elif isinstance(error, commands.CommandInvokeError):
-            await ctx.send(responses.BOT_INVOKE_COMMAND_ERROR, delete_after=10)
+            await ctx.send(
+                responses.BOT_INVOKE_COMMAND_ERROR, silent=True, delete_after=10
+            )
+        elif isinstance(error, commands.CheckFailure):
+            # check failure has its own error message already
+            await ctx.send(str(error), silent=True, delete_after=10)
         else:
-            await ctx.send(responses.BOT_PROCESS_COMMAND_ERROR, delete_after=10)
+            await ctx.send(
+                responses.BOT_PROCESS_COMMAND_ERROR, silent=True, delete_after=10
+            )
         # log the error for debugging
         print(f"Command error: {error}")
 
