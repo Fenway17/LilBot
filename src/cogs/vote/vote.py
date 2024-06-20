@@ -48,7 +48,9 @@ class Vote(commands.Cog):
             return ctx.send(responses.USER_DUPLICATE_INPUTS, delete_after=10)
 
         # view used to create buttons
-        view = MultipleOptionsView(options=option_list, author_id=ctx.author.id, single_only=single_only)
+        view = MultipleOptionsView(
+            options=option_list, author_id=ctx.author.id, single_only=single_only
+        )
         # embed used to create vote table
         embed = discord.Embed(title=title, description="_Vote now!_")
 
