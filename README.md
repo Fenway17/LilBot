@@ -1,24 +1,49 @@
-# ⚠️ UNDER CONSTRUCTION ⚠️
-
----
-
 # LilBot - A little bot project
 
-Built using [discord.py](https://github.com/Rapptz/discord.py "discord.py GitHub") in Python
+Built using [discord.py](https://github.com/Rapptz/discord.py "discord.py GitHub") in Python  
+Author: [Tan Yong Rui](https://www.linkedin.com/in/yong-rui-tan/)
 
 ---
 
 ## Features
 
-| Function             | Description                       | Command Group | Command                                                                                                   |
-| :------------------- | :-------------------------------- | :------------ | :-------------------------------------------------------------------------------------------------------- |
-| Youtube Music Player | Plays Youtube video in voice chat | /youtube      | play<br> repeat<br> skip<br> next<br> pause<br> resume<br> stop<br> goto<br> queue<br> current<br> remove |
-| Vote creation        | Creates custom votes              | /vote         | yes-no<br> multiple-options                                                                               |
-| Message management   | Manage messages in a text chat    | /message      | delete<br> clean<br> say                                                                                  |
-| User registration    | Registers users with the bot      | /user         | register_me<br> register_user<br> deregister_user<br> update_user_role<br> user_info                      |
-| PLACEHOLDER          | PLACEHOLDER                       | /placeholder  | placeholder                                                                                               |
+| Music Player Features         | Command Group | Command      | Remarks                                        |
+| :---------------------------- | :------------ | :----------- | :--------------------------------------------- |
+| Play a YouTube video          | /youtube      | play         |                                                |
+| Skip music                    | /youtube      | next OR skip |                                                |
+| Pause music                   | /youtube      | pause        |                                                |
+| Resume music                  | /youtube      | resume       |                                                |
+| Repeat a track / queue        | /youtube      | repeat       | toggles between 3 repeat modes                 |
+| Remove a track from queue     | /youtube      | remove       |                                                |
+| Stop music player             | /youtube      | stop         |                                                |
+| Clear queue                   | /youtube      | clear        | currently does not auto-clear after inactivity |
+| Check current track           | /youtube      | current      |                                                |
+| Go to specific track in queue | /youtube      | goto         |                                                |
+| Shuffle queue                 | /youtube      | shuffle      | not implemented yet                            |
+| Play a Spotify Track          | /spotify      | play         | assumes track exists on YouTube                |
 
-Features to implement
+| Vote/Poll Features                | Command Group | Command          | Remarks |
+| :-------------------------------- | :------------ | :--------------- | :------ |
+| Create yes-no vote                | /vote         | yes-no           |         |
+| Create vote with multiple options | /vote         | multiple-options |         |
+
+| Message Management Features      | Command Group | Command | Remarks |
+| :------------------------------- | :------------ | :------ | :------ |
+| Delete a number of messages      | /message      | delete  |         |
+| Delete a number of bots messages | /message      | clean   |         |
+| Make bot repeat a sentence       | /message      | say     |         |
+
+| User Management Features       | Command Group | Command          | Remarks |
+| :----------------------------- | :------------ | :--------------- | :------ |
+| Register yourself with the bot | /user         | register_me      |         |
+| Register user with the bot     | /user         | register_user    |         |
+| Deregister user with the bot   | /user         | deregister_user  |         |
+| Change registered user's role  | /user         | update_user_role |         |
+| Check registered user's info   | /user         | user_info        |         |
+
+---
+
+## Features to implement
 
 - [x] Youtube music player
   - [x] Repeat track / queue
@@ -26,17 +51,18 @@ Features to implement
   - [x] Search with keywords
   - [x] Search with URLs
   - [x] Insert entire playlists
-- [ ] Spotify music player
-- [x] Voting
-  - [x] Yes/No votes
-  - [x] Multi-option votes
+  - [ ] Add shuffle functionality
+  - [ ] Remove a range of songs from playlist
+- [x] Spotify music player
+  - [ ] Insert entire playlists
 - [x] Message management
-  - [x] Clean bot's messages
   - [x] Delete messages
   - [ ] Delete specific user messages
   - [x] Repeat after user
 - [x] Registration of users
   - [x] Custom roles for users
+- [x] Creation of votes / polls
+- [ ] Ask OpenAI (or other AI bots) a question
 
 ---
 
@@ -46,7 +72,3 @@ Features to implement
 2.
 
 ---
-
-### Miscellaneous
-
-Author: Fenway17
