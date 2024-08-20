@@ -1,4 +1,5 @@
 # LilBot - A little bot project
+<img src="https://github.com/user-attachments/assets/47b322a3-04bc-4afa-8fc6-58b59da61937" width="200">
 
 Built using [discord.py](https://github.com/Rapptz/discord.py "discord.py GitHub") in Python  
 Author: [Tan Yong Rui](https://www.linkedin.com/in/yong-rui-tan/)
